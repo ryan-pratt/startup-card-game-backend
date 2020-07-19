@@ -1,16 +1,27 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
-from resources import test
+from flask_socketio import SocketIO, emit, join_room
+from resources import session, turn
 
 app = Flask(__name__)
 app.secret_key = "hewwo" # TODO
 
-# SESSION_COOKIE_DOMAIN = "http://localhost:3000"
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
+
 api = Api(app)
 
-api.add_resource(test.HelloWorld, '/test')
+
+api.add_resource(session.Start, '/start', resource_class_kwargs={ 'socketio': socketio })
+api.add_resource(turn.Turn, '/turn', resource_class_kwargs={ 'socketio': socketio })
+
+
+@socketio.on('join')
+def on_join(data):
+    room = data['room']
+    join_room(room)
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app)

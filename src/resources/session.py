@@ -1,7 +1,10 @@
 from flask import request, jsonify, session
 from flask_restful import Resource
+from flask_socketio import join_room
 
 class Start(Resource):
+    def __init__(self, **kwargs):
+        self.socketio = kwargs['socketio']
     
     def post(self):
         code = request.json['code']
