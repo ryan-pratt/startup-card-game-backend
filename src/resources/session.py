@@ -7,16 +7,25 @@ class Start(Resource):
         self.socketio = kwargs['socketio']
         self.redis_client = kwargs['redis_client']
     
+
     def post(self):
         code = request.json['code']
+        
+        self.redis_client.incr(code + ':playercount')
+
         session['gameCode'] = code
         session['playerId'] = 'host'
-        # TODO: set redis keys
         return ("Started session " + code, 201)
+    
     
     def put(self):
         code = request.json['code']
-        # TODO: figure out player number from redis
+
+        player_id = self.redis_client.get(code + ':playercount')
+        self.redis_client.incr(code + ':playercount')
+
+        self.socketio.emit('player-join', {'playerCount': player_id}, room=code)
+
         session['gameCode'] = code
-        session['playerId'] = 1
-        return (code, 200)
+        session['playerId'] = player_id
+        return (player_id, 200)
