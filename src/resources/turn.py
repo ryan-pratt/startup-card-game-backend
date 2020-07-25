@@ -5,6 +5,7 @@ from flask_socketio import emit
 class Turn(Resource):
     def __init__(self, **kwargs):
         self.socketio = kwargs['socketio']
+        self.redis_client = kwargs['redis_client']
 
     def post(self):
         code = session['gameCode']

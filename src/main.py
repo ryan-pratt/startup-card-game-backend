@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_redis import FlaskRedis
 from flask_restful import Api
 from flask_socketio import SocketIO, emit, join_room
 from resources import session, turn
@@ -11,10 +12,12 @@ CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://local
 socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
 api = Api(app)
+redis_client = FlaskRedis(app, decode_responses=True)
 
 
-api.add_resource(session.Start, '/start', resource_class_kwargs={ 'socketio': socketio })
-api.add_resource(turn.Turn, '/turn', resource_class_kwargs={ 'socketio': socketio })
+# TODO: flask DI?
+api.add_resource(session.Start, '/start', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
+api.add_resource(turn.Turn, '/turn', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
 
 
 @socketio.on('join')

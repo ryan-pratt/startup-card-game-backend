@@ -5,6 +5,7 @@ from flask_socketio import join_room
 class Start(Resource):
     def __init__(self, **kwargs):
         self.socketio = kwargs['socketio']
+        self.redis_client = kwargs['redis_client']
     
     def post(self):
         code = request.json['code']
