@@ -16,7 +16,7 @@ redis_client = FlaskRedis(app, decode_responses=True)
 
 
 # TODO: flask DI?
-api.add_resource(session.Start, '/start', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
+api.add_resource(session.Session, '/session', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
 api.add_resource(turn.Turn, '/turn', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
 
 
