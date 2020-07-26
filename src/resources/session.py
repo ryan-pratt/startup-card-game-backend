@@ -11,6 +11,7 @@ class Session(Resource):
     def post(self):
         code = request.json['code']
         
+        self.redis_client.set(code + ':in-lobby', '')
         self.redis_client.incr(code + ':player-count')
 
         session['gameCode'] = code
@@ -20,6 +21,10 @@ class Session(Resource):
 
     def put(self):
         code = request.json['code']
+
+        in_lobby = self.redis_client.get(code + ':in-lobby')
+        if (in_lobby is None):
+            return ('Game with code ' + code + ' is not accepting players', 400)
 
         player_id = self.redis_client.get(code + ':player-count')
         self.redis_client.incr(code + ':player-count')
