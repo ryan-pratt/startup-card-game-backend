@@ -13,6 +13,8 @@ class Start(Resource):
         code = session['gameCode']
         self.redis_client.delete(code + ':in-lobby')
         self.build_deck(code)
+        # TODO: initial resource points, etc
+        self.redis_client.set(code + ':turn', 0)
         self.socketio.emit('start-game', {}, room=code)
         return ('', 200)
 

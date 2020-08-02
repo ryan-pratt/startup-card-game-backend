@@ -7,8 +7,13 @@ class Turn(Resource):
         self.socketio = kwargs['socketio']
         self.redis_client = kwargs['redis_client']
 
+    def get(self):
+        code = session['gameCode']
+        turn_number = self.redis_client.get(code + ':turn')
+        return (turn_number, 200)
+
     def post(self):
         code = session['gameCode']
         playerId = session['playerId']
-        self.socketio.emit('test', {'playerId': playerId}, room=code)
+        self.redis_client.incr(code + ':turn')
         return ("", 200)
