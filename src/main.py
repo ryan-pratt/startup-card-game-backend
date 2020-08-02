@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_redis import FlaskRedis
 from flask_restful import Api
 from flask_socketio import SocketIO, emit, join_room
-from resources import session, start, turn
+from resources import session, start, turn, card
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('secrets.Config')
@@ -19,6 +19,7 @@ redis_client = FlaskRedis(app, decode_responses=True)
 api.add_resource(session.Session, '/session', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
 api.add_resource(start.Start, '/start', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
 api.add_resource(turn.Turn, '/turn', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
+api.add_resource(card.Card, '/card', resource_class_kwargs={ 'socketio': socketio, 'redis_client': redis_client })
 
 
 @socketio.on('join')
